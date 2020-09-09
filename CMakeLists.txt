@@ -12,8 +12,8 @@ include(cmake/CPM.cmake)
 
 CPMAddPackage(
 	NAME SDL
-	GITHUB_REPOSITORY SDL-mirror/SDL
-	GIT_TAG e7d141a55be08ba10d883f009d8fcc804729eacc
+	GITHUB_REPOSITORY loopunit/SDL
+	GIT_TAG 5ddad65c3444822558cfd2e169167159444eec1d
 	DOWNLOAD_ONLY TRUE
     OPTIONS 
 		"CPM_SOURCE_CACHE=${CPM_SOURCE_CACHE}"
@@ -32,6 +32,7 @@ option(SDL_DISABLE_VIDEO "Disable video" TRUE)
 option(SDL_DISABLE_SHARED "Disable shared lib" TRUE)
 option(SDL_DISABLE_LOADSO "Disable loadso" TRUE)
 option(SDL_DISABLE_DLOPEN "Disable dlopen" TRUE)
+option(SDL_DISABLE_DYNAPI "Disable dynapi" TRUE)
 
 if(SDL_DISABLE_SHARED)
     set(SDL_SHARED_ENABLED_BY_DEFAULT FALSE)
@@ -2241,6 +2242,9 @@ endif()
 if(SDL_STATIC)
   set (BUILD_SHARED_LIBS FALSE)
   add_library(SDL2 STATIC ${SOURCE_FILES})
+  if(SDL_DISABLE_DYNAPI)
+    target_compile_definitions(SDL2 PUBLIC SDL_DYNAMIC_API=0)
+  endif()
   if (NOT SDL_SHARED OR NOT WIN32)
     set_target_properties(SDL2 PROPERTIES OUTPUT_NAME "SDL2")
     # Note: Apparently, OUTPUT_NAME must really be unique; even when
